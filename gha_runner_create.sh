@@ -20,7 +20,7 @@ function create_sysbox_gha_runner {
 
     docker run -d --restart=always \
         --runtime=sysbox-runc \
-        --cap-add sys_resource \
+        --cap-add=SYS_RESOURCE \
         --ulimit nofile=1048576 \
         -e REPO_URL="https://github.com/${org}/${repo}" \
         -e RUNNER_TOKEN="$token" \
