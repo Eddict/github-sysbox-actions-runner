@@ -29,6 +29,7 @@ function create_sysbox_gha_runner {
 
     docker run -d --restart=always \
         --runtime=sysbox-runc \
+        -v "$(pwd)/actions-runner-files:/actions-runner-files" \
         -e REPO_URL="https://github.com/${org}/${repo}" \
         -e RUNNER_TOKEN="$token" \
         -e RUNNER_NAME="$name" \
