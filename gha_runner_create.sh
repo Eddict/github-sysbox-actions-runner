@@ -15,8 +15,17 @@ function create_sysbox_gha_runner {
     org=$2
     repo=$3
     token=$4
+    env_vars=$5
 
-    docker rm -f $name >/dev/null 2>&1 || true
+    docker rm -f "$name" >/dev/null 2>&1 || true
+
+    # Parse env_vars argument (key=value pairs separated by spaces)
+    env_args=""
+    if [[ -n "$env_vars" ]]; then
+        for pair in $env_vars; do
+            env_args+=" -e $pair"
+        done
+    fi
 
     docker run -d --restart=always \
         --runtime=sysbox-runc \
@@ -25,6 +34,7 @@ function create_sysbox_gha_runner {
         -e RUNNER_NAME="$name" \
         -e RUNNER_GROUP="" \
         -e LABELS="" \
+        $env_args \
         --name "$name" rodnymolina588/gha-sysbox-runner:latest
 
         # --cap-add=SYS_RESOURCE \
@@ -32,13 +42,22 @@ function create_sysbox_gha_runner {
 }
 
 function main() {
-    if [[ $# -ne 4 ]]; then
+    if [[ $# -lt 4 ]]; then
         printf "\nerror: Unexpected number of arguments provided\n"
-        printf "\nUsage: ./gha_runner_create.sh <runner-name> <org> <repo-name> <runner-token>\n\n"
+        printf "\nUsage: ./gha_runner_create.sh <runner-name> <org> <repo-name> <runner-token> [ENV_VAR1=val1 ENV_VAR2=val2 ...]\n\n"
         exit 2
     fi
 
-    create_sysbox_gha_runner "$1" "$2" "$3" "$4"
+    # Collect env-vars (all args after the 4th)
+    env_vars=""
+    if [[ $# -gt 4 ]]; then
+        shift 4
+        env_vars="$@"
+        # Restore positional params for first 4 args
+        set -- "$1" "$2" "$3" "$4"
+    fi
+
+    create_sysbox_gha_runner "$1" "$2" "$3" "$4" "$env_vars"
 }
 
 main "$@"
