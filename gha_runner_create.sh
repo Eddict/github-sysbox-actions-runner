@@ -29,6 +29,8 @@ function create_sysbox_gha_runner {
 
     docker run -d --restart=always \
         --runtime=sysbox-runc \
+        --cap-add=SYS_RESOURCE \
+        --ulimit nofile=1048576 \
         -v "$(pwd)/actions-runner-files:/actions-runner-files" \
         -e REPO_URL="https://github.com/${org}/${repo}" \
         -e RUNNER_TOKEN="$token" \
@@ -38,8 +40,6 @@ function create_sysbox_gha_runner {
         $env_args \
         --name "$name" rodnymolina588/gha-sysbox-runner:latest
 
-        # --cap-add=SYS_RESOURCE \
-        # --ulimit nofile=1048576 \
 }
 
 function main() {
@@ -49,16 +49,20 @@ function main() {
         exit 2
     fi
 
+    # Save first 4 args
+    name="$1"
+    org="$2"
+    repo="$3"
+    token="$4"
+
     # Collect env-vars (all args after the 4th)
     env_vars=""
     if [[ $# -gt 4 ]]; then
         shift 4
         env_vars="$@"
-        # Restore positional params for first 4 args
-        set -- "$1" "$2" "$3" "$4"
     fi
 
-    create_sysbox_gha_runner "$1" "$2" "$3" "$4" "$env_vars"
+    create_sysbox_gha_runner "$name" "$org" "$repo" "$token" "$env_vars"
 }
 
 main "$@"
