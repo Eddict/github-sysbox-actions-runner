@@ -60,6 +60,7 @@ function create_sysbox_gha_runner {
         $env_args \
         --name "$name" eddictnl/gha-sysbox-runner:latest
 
+        # --user runner \
         # --cap-add=SYS_RESOURCE \
         # --ulimit nofile=1048576 \
 }
