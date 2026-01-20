@@ -34,7 +34,7 @@ function create_sysbox_gha_runner {
     # Update runner in persistent volume
     docker run --rm \
         -v "$(pwd)/actions-runner:/actions-runner" \
-        --entrypoint /bin/bash rodnymolina588/gha-sysbox-runner:latest -c "cd /actions-runner && \
+        --entrypoint /bin/bash eddictnl/gha-sysbox-runner:latest -c "cd /actions-runner && \
             curl -L -o actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz https://github.com/actions/runner/releases/download/v${GH_RUNNER_VERSION}/actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz && \
             tar xzf actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz && \
             rm actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz && \
@@ -58,7 +58,7 @@ function create_sysbox_gha_runner {
         -e RUNNER_GROUP="" \
         -e LABELS="" \
         $env_args \
-        --name "$name" rodnymolina588/gha-sysbox-runner:latest
+        --name "$name" eddictnl/gha-sysbox-runner:latest
 
         # --cap-add=SYS_RESOURCE \
         # --ulimit nofile=1048576 \
