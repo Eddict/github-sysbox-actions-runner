@@ -19,26 +19,29 @@ function create_sysbox_gha_runner {
 
     docker rm -f "$name" >/dev/null 2>&1 || true
 
-    # Determine runner version
-    GH_RUNNER_VERSION="${GH_RUNNER_VERSION:-}"
-    if [[ -z "$GH_RUNNER_VERSION" ]]; then
-        echo "Fetching latest runner version from GitHub..."
-        GH_RUNNER_VERSION=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | grep tag_name | cut -d '"' -f4 | sed 's/v//')
-        if [[ -z "$GH_RUNNER_VERSION" ]]; then
-            echo "Failed to fetch latest runner version. Aborting." >&2
-            exit 1
-        fi
-    fi
-    echo "Using runner version: $GH_RUNNER_VERSION"
+    # # Determine runner version
+    # GH_RUNNER_VERSION="${GH_RUNNER_VERSION:-}"
+    # if [[ -z "$GH_RUNNER_VERSION" ]]; then
+    #     echo "Fetching latest runner version from GitHub..."
+    #     GH_RUNNER_VERSION=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | grep tag_name | cut -d '"' -f4 | sed 's/v//')
+    #     if [[ -z "$GH_RUNNER_VERSION" ]]; then
+    #         echo "Failed to fetch latest runner version. Aborting." >&2
+    #         exit 1
+    #     fi
+    # fi
+    # echo "Using runner version: $GH_RUNNER_VERSION"
 
-    # Update runner in persistent volume
+    # # Update runner in persistent volume
+    # docker run --rm \
+    #     -v "$(pwd)/actions-runner:/actions-runner" \
+    #     --entrypoint /bin/bash eddictnl/gha-sysbox-runner:latest -c "cd /actions-runner && \
+    #         curl -L -o actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz https://github.com/actions/runner/releases/download/v${GH_RUNNER_VERSION}/actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz && \
+    #         tar xzf actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz && \
+    #         rm actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz && \
+    #         ./bin/installdependencies.sh"
     docker run --rm \
         -v "$(pwd)/actions-runner:/actions-runner" \
-        --entrypoint /bin/bash eddictnl/gha-sysbox-runner:latest -c "cd /actions-runner && \
-            curl -L -o actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz https://github.com/actions/runner/releases/download/v${GH_RUNNER_VERSION}/actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz && \
-            tar xzf actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz && \
-            rm actions-runner-linux-x64-${GH_RUNNER_VERSION}.tar.gz && \
-            ./bin/installdependencies.sh"
+        --entrypoint /bin/bash eddictnl/gha-sysbox-runner:latest -c "cd /actions-runner"
 
     # Parse env_vars argument (key=value pairs separated by spaces)
     env_args=""
