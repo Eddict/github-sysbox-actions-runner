@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
   xsltproc rsync file \
   xfonts-utils libjson-perl rdfind libparse-yapp-perl gperf \
   libxml-parser-perl patchutils lzop \
-  default-jre zip
+  default-jre zip zstd sudo
     
 RUN apt-get update && apt-get install -y --no-install-recommends dumb-init jq \
   && groupadd -g 121 runner \
