@@ -21,7 +21,7 @@ LABEL org.opencontainers.image.version="${GH_RUNNER_VERSION}"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN apt-get update && apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
   git make gcc g++ bc bzip2 unzip wget python3 python3-pip xz-utils \
   libssl-dev libncurses5-dev libncursesw5-dev zlib1g-dev gawk flex gettext \
   xsltproc rsync file \
@@ -29,7 +29,7 @@ RUN apt-get update && apt-get install -y \
   libxml-parser-perl patchutils lzop \
   default-jre zip zstd sudo
     
-RUN apt-get update && apt-get install -y --no-install-recommends dumb-init jq \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends dumb-init jq \
   && groupadd -g 121 runner \
   && useradd -mr -d /home/runner -u 1001 -g 121 runner \
   && usermod -aG sudo runner \
