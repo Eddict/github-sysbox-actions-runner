@@ -27,8 +27,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y \
   xsltproc rsync file \
   xfonts-utils libjson-perl rdfind libparse-yapp-perl gperf \
   libxml-parser-perl patchutils lzop \
-  default-jre zip zstd sudo
-    
+  default-jre zip zstd sudo \
+  device-tree-compiler ccache kmod keyutils openssl elfutils u-boot-tools pigz mtools squashfs-tools
+
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends dumb-init jq \
   && groupadd -g 121 runner \
   && useradd -mr -d /home/runner -u 1001 -g 121 runner \
