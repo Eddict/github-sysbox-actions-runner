@@ -8,7 +8,12 @@ LABEL maintainer="eddictnl@docker.com"
 ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
 RUN mkdir -p /opt/hostedtoolcache
 
-ARG GH_RUNNER_VERSION="2.331.0"
+ARG GH_RUNNER_VERSION
+RUN if [ -z "$GH_RUNNER_VERSION" ]; then \
+    GH_RUNNER_VERSION=$(curl -s https://api.github.com/repos/actions/runner/releases/latest | grep tag_name | cut -d '"' -f4 | sed 's/v//'); \
+  fi && \
+  echo "Using GH_RUNNER_VERSION=$GH_RUNNER_VERSION" && \
+  echo "GH_RUNNER_VERSION=$GH_RUNNER_VERSION" > /ENV
 
 ARG TARGETPLATFORM
 
@@ -35,7 +40,7 @@ WORKDIR /actions-runner
 COPY scr/install_actions.sh /actions-runner
 
 RUN chmod +x /actions-runner/install_actions.sh \
-  && /actions-runner/install_actions.sh ${GH_RUNNER_VERSION} ${TARGETPLATFORM} \
+  && source /ENV && /actions-runner/install_actions.sh ${GH_RUNNER_VERSION} ${TARGETPLATFORM} \
   && rm /actions-runner/install_actions.sh \
   && chown runner /_work /actions-runner /opt/hostedtoolcache
 
